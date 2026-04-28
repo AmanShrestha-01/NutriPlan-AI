@@ -28,6 +28,35 @@ def call_claude(prompt):
 
 @plans_bp.route("/plans", methods=["POST"])
 def generate_plan():
+    """
+    Generate an AI meal plan based on your goals and budget
+    ---
+    tags:
+      - Meal Plans
+    parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            budget:
+              type: number
+              example: 50
+    responses:
+      200:
+        description: AI-generated 7-day meal plan
+      400:
+        description: Budget missing or goals not set
+      401:
+        description: Not logged in
+      500:
+        description: AI request failed
+    """
     user = get_logged_in_user()
     if not user:
         return jsonify({"error": "You must be logged in"}), 401
@@ -74,6 +103,22 @@ Include a grocery list at the end with estimated costs."""
 
 @plans_bp.route("/plans", methods=["GET"])
 def get_plans():
+    """
+    View your past meal plans
+    ---
+    tags:
+      - Meal Plans
+    parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+    responses:
+      200:
+        description: List of past meal plans
+      401:
+        description: Not logged in
+    """
     user = get_logged_in_user()
     if not user:
         return jsonify({"error": "You must be logged in"}), 401

@@ -11,6 +11,32 @@ SECRET_KEY = "your-secret-key-change-this-later"
 
 @auth_bp.route("/signup", methods=["POST"])
 def signup():
+    """
+    Create a new account
+    ---
+    tags:
+      - Auth
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            username:
+              type: string
+              example: kaizen
+            password:
+              type: string
+              example: mypassword123
+    responses:
+      201:
+        description: Account created
+      400:
+        description: Invalid input
+      409:
+        description: Username taken
+    """
     data = request.json
     if not data:
         return jsonify({"error": "No data provided"}), 400
@@ -27,6 +53,30 @@ def signup():
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
+    """
+    Log in and get a token
+    ---
+    tags:
+      - Auth
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            username:
+              type: string
+              example: kaizen
+            password:
+              type: string
+              example: mypassword123
+    responses:
+      200:
+        description: Token returned
+      401:
+        description: Invalid credentials
+    """
     data = request.json
     if not data:
         return jsonify({"error": "No data provided"}), 400
@@ -50,6 +100,46 @@ def login():
 
 @auth_bp.route("/profile", methods=["PUT"])
 def update_profile():
+    """
+    Set your height, weight, and macro goals
+    ---
+    tags:
+      - Auth
+    parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            height:
+              type: number
+              example: 5.9
+            weight:
+              type: number
+              example: 77
+            calorie_goal:
+              type: number
+              example: 2200
+            protein_goal:
+              type: number
+              example: 180
+            carb_goal:
+              type: number
+              example: 220
+            fat_goal:
+              type: number
+              example: 65
+    responses:
+      200:
+        description: Profile updated
+      401:
+        description: Not logged in
+    """
     user = get_logged_in_user()
     if not user:
         return jsonify({"error": "You must be logged in"}), 401
